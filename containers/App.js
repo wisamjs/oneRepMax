@@ -8,16 +8,10 @@ import React, { Component } from 'react';
 import {
   Platform,
   StyleSheet,
-  Text,
   View
 } from 'react-native';
 
-import { Button } from 'react-native-elements';
-import Input from '../components/Input';
-import Slide from '../components/slide';
-import SwipeBanner from '../components/SwipeBanner';
-import Swiper from 'react-native-swiper';
-
+import SwipeBanner from './SwipeBanner';
 
 
 export default class App extends Component<{}> {
@@ -47,27 +41,11 @@ export default class App extends Component<{}> {
   }
 
   render() {
-    const exercises = Object
-      .keys(this.state.oneRms)
-      .map((exercise, key) => {
-        return <Slide key={key}>
-          <Text>{this.state.oneRms[exercise].displayName}</Text>
-          <Input
-          type="numeric"
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.oneRms[exercise].kg}
-        />
-        </Slide>
-
-      })
-
     return (
       <View style={styles.container}>
-        <View style={styles.header} >
-        <SwipeBanner>
-          {exercises}
-        </SwipeBanner>
-        </View>
+          <SwipeBanner
+          state={this.state}>
+          </SwipeBanner>
       </View>
     );
   }
@@ -79,15 +57,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#000',
-  },
-  header: {
-    height: 100
-  },
-  wrapper: {
-  },
-  text: {
-    color: '#fff',
-    fontSize: 30,
-    fontWeight: 'bold',
   }
 })

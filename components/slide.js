@@ -7,7 +7,6 @@ const style = {
   flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '#DA0014',
   padding: 20
 };
 
