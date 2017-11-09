@@ -31,8 +31,8 @@ export default class OneRmCalculator extends Component<{}> {
     this.state = this.props.state;
   }
 
-  render() {
-    const exercises = Object
+  getExercises() {
+    return Object
       .keys(this.state.oneRms)
       .sort()
       .map((exercise, key) => {
@@ -46,13 +46,18 @@ export default class OneRmCalculator extends Component<{}> {
           reps={reps}
           onChangeText={(key, value) => this.props.onChange(exercise, key, value)}/>
         </Slide>
+    })
+}
 
-      })
+  render() {
+    const exercises = this.getExercises();
 
     return (
       <View style={styles.container}>
         <View style={styles.view}>
           <Swiper
+          dot={<View></View>}
+          activeDot = {<View></View>}
           paginationStyle={styles.pagination}
           showsButtons={false}
           showsHorizontalScrollIndicator={false}
@@ -66,6 +71,5 @@ export default class OneRmCalculator extends Component<{}> {
 }
 
 // {
-            // dot={<View></View>}
-          // activeDot = {<View></View>}
+
 // }

@@ -54,7 +54,7 @@ export default class App extends Component<{}> {
 
   getOneRm(weight, reps) {
     const  total = weight/ (1.013 - (0.0267123 * reps));
-    return Math.ceil(total);
+    return Math.ceil(total/5)*5;
   }
 
   getCurrentExerciseOneRm() {
@@ -66,10 +66,12 @@ export default class App extends Component<{}> {
 
   onWeightUpdated(exercise, key, value) {
     let newOneRms = {...this.state.oneRms};
-    const weight = newOneRms[exercise].weight;
-    const reps = newOneRms[exercise].reps;
-    const newOneRm = this.getOneRm(weight, reps);
     newOneRms[exercise][key] = value;
+    const newOneRmWeight = newOneRms[exercise].weight;
+    const newOneRmReps = newOneRms[exercise].reps;
+
+    const newOneRm = this.getOneRm(newOneRmWeight, newOneRmReps);
+
     newOneRms[exercise].oneRm = newOneRm;
 
     //Update Exercise OneRm
@@ -87,15 +89,15 @@ export default class App extends Component<{}> {
   }
 
   updateCurrentExercise(index) {
-    // const newExercise = Object
-    // .keys(this.state.oneRms)
-    // .sort()[index];
+    const newExercise = Object
+    .keys(this.state.oneRms)
+    .sort()[index];
 
-    // const newOneRm = this.state.oneRms[newExercise].oneRm;
+    const newOneRm = this.state.oneRms[newExercise].oneRm;
 
     this.setState({
-      currentExercise: 'deadlift',
-      currentOneRm: '150'
+      currentExercise: newExercise,
+      currentOneRm: newOneRm
     });
 
   }
