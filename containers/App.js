@@ -8,16 +8,11 @@ import React, { Component } from 'react';
 import {
   Platform,
   StyleSheet,
-  Text,
   View
 } from 'react-native';
 
-import { Button } from 'react-native-elements';
-import Input from '../components/Input';
-import Slide from '../components/slide';
-import SwipeBanner from '../components/SwipeBanner';
-import Swiper from 'react-native-swiper';
-
+import SwipeBanner from './SwipeBanner';
+import OneRmResults from './OneRmResults';
 
 
 export default class App extends Component<{}> {
@@ -25,49 +20,99 @@ export default class App extends Component<{}> {
   constructor(props) {
     super(props);
     this.state = {
+      index: '0',
+      currentExercise: 'benchPress',
+      currentOneRm: '205',
       oneRms: {
-        deadlift: {
-          displayName: 'Deadlift',
-          kg: '100'
-        },
-        squat: {
-          displayName: 'Squat',
-          kg: '200'
-        },
         benchPress: {
           displayName: 'Bench Press',
-          kg: '150'
+          reps: '1',
+          weight: '205',
+          oneRm: '205'
+        },
+        deadlift: {
+          displayName: 'Deadlift',
+          reps: '1',
+          weight: '360',
+          oneRm: '360'
         },
         overHeadPress: {
           displayName: 'Overhead Press',
-          kg: '65'
-        }
+          reps: '1',
+          weight: '120',
+          oneRm: '120'
+        },
+        squat: {
+          displayName: 'Squat',
+          reps: '1',
+          weight: '250',
+          oneRm: '250'
+        },
       }
     }
   }
 
-  render() {
-    const exercises = Object
-      .keys(this.state.oneRms)
-      .map((exercise, key) => {
-        return <Slide key={key}>
-          <Text>{this.state.oneRms[exercise].displayName}</Text>
-          <Input
-          type="numeric"
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.oneRms[exercise].kg}
-        />
-        </Slide>
+  getOneRm(weight, reps) {
+    const  total = weight/ (1.013 - (0.0267123 * reps));
+    return Math.ceil(total/5)*5;
+  }
 
+  getCurrentExerciseOneRm() {
+    const currentExercise = this.state.currentExercise;
+    const currentExerciseObj = this.state.oneRms[currentExercise];
+    return currentExerciseObj.oneRm;
+
+  }
+
+  onWeightUpdated(exercise, key, value) {
+    let newOneRms = {...this.state.oneRms};
+    newOneRms[exercise][key] = value;
+    const newOneRmWeight = newOneRms[exercise].weight;
+    const newOneRmReps = newOneRms[exercise].reps;
+
+    const newOneRm = this.getOneRm(newOneRmWeight, newOneRmReps);
+
+    newOneRms[exercise].oneRm = newOneRm;
+
+    //Update Exercise OneRm
+    this.setState({OneRms: newOneRms});
+
+    //update current OneRm
+    if (exercise === this.state.currentExercise) {
+      this.setState({
+        ...this.state,
+        currentOneRm: newOneRm
       })
 
+    }
+
+  }
+
+  updateCurrentExercise(index) {
+    const newExercise = Object
+    .keys(this.state.oneRms)
+    .sort()[index];
+
+    const newOneRm = this.state.oneRms[newExercise].oneRm;
+
+    this.setState({
+      currentExercise: newExercise,
+      currentOneRm: newOneRm
+    });
+
+  }
+
+  render() {
     return (
       <View style={styles.container}>
-        <View style={styles.header} >
-        <SwipeBanner>
-          {exercises}
-        </SwipeBanner>
-        </View>
+          <SwipeBanner
+          state={this.state}
+          onChange={(exercise, weight, reps) => this.onWeightUpdated(exercise, weight, reps)}
+          onIndexChanged={(index) => this.updateCurrentExercise(index)}>
+          </SwipeBanner>
+          <OneRmResults
+          test={this.state}
+          oneRm={this.state.currentOneRm}/>
       </View>
     );
   }
@@ -79,15 +124,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#000',
-  },
-  header: {
-    height: 100
-  },
-  wrapper: {
-  },
-  text: {
-    color: '#fff',
-    fontSize: 30,
-    fontWeight: 'bold',
   }
 })
