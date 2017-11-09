@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import {
+  Text,
+  View
+} from 'react-native';
 import Swiper from 'react-native-swiper';
 import Input from '../components/Input';
 import Slide from '../components/slide';
 import Heading from '../components/Heading';
+import OneRmForm from './OneRmForm';
 
 const styles = {
   container: {
-    height: 100,
+    height: 150,
     paddingTop: 15,
     backgroundColor: '#DA0014'
   },
@@ -20,7 +24,7 @@ const styles = {
   }
 }
 
-export default class SwipeBanner extends Component<{}> {
+export default class OneRmCalculator extends Component<{}> {
 
   constructor(props) {
     super(props);
@@ -30,14 +34,17 @@ export default class SwipeBanner extends Component<{}> {
   render() {
     const exercises = Object
       .keys(this.state.oneRms)
+      .sort()
       .map((exercise, key) => {
+        const name = this.state.oneRms[exercise].displayName;
+        const weight = this.state.oneRms[exercise].weight;
+        const reps= this.state.oneRms[exercise].reps;
         return <Slide key={key}>
-          <Heading>{this.state.oneRms[exercise].displayName}</Heading>
-          <Input
-          type="numeric"
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.oneRms[exercise].kg}
-        />
+          <OneRmForm
+          name={name}
+          weight={weight}
+          reps={reps}
+          onChangeText={(key, value) => this.props.onChange(exercise, key, value)}/>
         </Slide>
 
       })
@@ -46,11 +53,10 @@ export default class SwipeBanner extends Component<{}> {
       <View style={styles.container}>
         <View style={styles.view}>
           <Swiper
-          dot={<View></View>}
-          activeDot = {<View></View>}
           paginationStyle={styles.pagination}
           showsButtons={false}
-          showsHorizontalScrollIndicator={false}>
+          showsHorizontalScrollIndicator={false}
+          onIndexChanged={(index)=> this.props.onIndexChanged(index)}>
             {exercises}
           </Swiper>
         </View>
@@ -58,3 +64,8 @@ export default class SwipeBanner extends Component<{}> {
     )
   }
 }
+
+// {
+            // dot={<View></View>}
+          // activeDot = {<View></View>}
+// }
